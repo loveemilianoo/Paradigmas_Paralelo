@@ -5,11 +5,10 @@ import random
 def minCRCW (L, n):
     win = [0] * n
     hilos = []
-
     def inicializar(idx):
         win[idx] =0
-
     for i in range(n):
+        #Tarea 1
         t = threading.Thread(target=inicializar, args=(i,))
         hilos.append(t)
         t.start()
@@ -22,22 +21,30 @@ def minCRCW (L, n):
             win[i] = 1
         elif L[i] < L[j]:
             win[j] = 1
-
     for i in range(n):
         for j in range (i+1, n):
+            #Tarea 2
             t = threading.Thread(target= compararElementos, args=(i,j))
             hilosComp.append(t)
             t.start()
     for t in hilosComp:
         t.join()
 
-    minimoIDX = -1
-    for i in range(n):
+    minimoVal = None
+    hilosMin = []
+    def buscarMinimo(i):
+        nonlocal minimoVal
         if win[i] == 0:
-            minimoIDX = i
-            break
+            minimoVal = L[i]
+    for i in range(n):
+        #Tarea 3
+        t = threading.Thread(target=buscarMinimo, args=(i,))
+        hilosMin.append(t)
+        t.start()
+    for t in hilosMin:
+        t.join()
 
-    return L[minimoIDX] if minimoIDX != -1 else None
+    return minimoVal
 
 if __name__ == "__main__":
     n = 32
@@ -51,4 +58,4 @@ if __name__ == "__main__":
     tiempoTotal = time.perf_counter() - tiempoInicial
 
     print(f"El minimo es: {resultado}")
-    print(f"\nTiempo de ejecución: {tiempoTotal:.6f} segundos") 
+    print(f"\nTiempo de ejecucion: {tiempoTotal:.6f} segundos") 
